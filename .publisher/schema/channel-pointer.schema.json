@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "development",
+        "production"
+      ]
+    },
+    "releaseId": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "manifestPath": {
+      "type": "string",
+      "maxLength": 200,
+      "pattern": "^(?:[a-z0-9][a-z0-9_-]*\\/)*[a-z0-9][a-z0-9_-]*\\.json$",
+      "description": "Relative to the content root, e.g. releases/<id>/manifest.json."
+    },
+    "manifestSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "channel",
+    "releaseId",
+    "manifestPath",
+    "manifestSha256"
+  ],
+  "title": "ChannelPointer",
+  "$id": "urn:living-orthodox:contract:v1:channel-pointer"
+}

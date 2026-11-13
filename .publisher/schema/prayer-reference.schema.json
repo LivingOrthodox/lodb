@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "title": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "validationStatus": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "validated",
+        "unavailable"
+      ]
+    },
+    "iosLink": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "macosLink": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "androidLink": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "webFallback": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "validationStatus"
+  ],
+  "title": "PrayerReference",
+  "description": "A provider-independent prayer reference. Only validated references can open anything.",
+  "$id": "urn:living-orthodox:contract:v1:prayer-reference"
+}

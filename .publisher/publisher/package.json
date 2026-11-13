@@ -1,0 +1,10 @@
+{
+  "name": "@living-orthodox/content-publisher",
+  "private": true,
+  "type": "module",
+  "description": "Validates editorial content and builds immutable releases for the apps. Runs in the content repository's trusted CI, never in an app.",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@living-orthodox/content-contracts": "*"
+  }
+}

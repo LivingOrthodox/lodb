@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "jurisdictionId": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "traditionId": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "locale": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}$"
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+          "description": "Gregorian civil date (YYYY-MM-DD), year 1900-2199. Not a timestamp."
+        },
+        "end": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+          "description": "Gregorian civil date (YYYY-MM-DD), year 1900-2199. Not a timestamp."
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "Coverage",
+      "description": "Inclusive range with a reviewed day record for every date."
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "isDevelopmentContent": {
+      "type": "boolean"
+    },
+    "googleCalendarId": {
+      "description": "The public Google Calendar the publisher keeps in sync with this calendar; apps offer it for subscription.",
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]{0,119}@group\\.calendar\\.google\\.com$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "jurisdictionId",
+    "traditionId",
+    "name",
+    "locale",
+    "coverage",
+    "revision",
+    "isDevelopmentContent"
+  ],
+  "title": "CalendarConfiguration",
+  "$id": "urn:living-orthodox:contract:v1:calendar-configuration"
+}

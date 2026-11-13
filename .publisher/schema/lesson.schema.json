@@ -1,0 +1,380 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "locale": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}$"
+    },
+    "pathId": {
+      "type": "string",
+      "enum": [
+        "discovering-orthodoxy",
+        "living-the-faith",
+        "wisdom-and-virtue",
+        "understanding-the-church",
+        "orthodoxy-in-modern-life"
+      ]
+    },
+    "pathOrder": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "description": "Position within the path; ties break by id."
+    },
+    "title": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "summary": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "objectives": {
+      "minItems": 1,
+      "maxItems": 8,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    "learn": {
+      "minItems": 1,
+      "maxItems": 200,
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "paragraph"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "text": {
+                "type": "string",
+                "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+                "minLength": 1,
+                "maxLength": 5000
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "text"
+            ],
+            "title": "paragraphBlock"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "heading"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "text": {
+                "type": "string",
+                "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "text"
+            ],
+            "title": "headingBlock"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "list"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "style": {
+                "type": "string",
+                "enum": [
+                  "bulleted",
+                  "numbered"
+                ]
+              },
+              "items": {
+                "minItems": 1,
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+                  "minLength": 1,
+                  "maxLength": 1000
+                }
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "style",
+              "items"
+            ],
+            "title": "listBlock"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "quote"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "text": {
+                "type": "string",
+                "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+                "minLength": 1,
+                "maxLength": 2000
+              },
+              "author": {
+                "type": "string",
+                "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "sourceId": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "text",
+              "author",
+              "sourceId"
+            ],
+            "title": "quoteBlock"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "term"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "term": {
+                "type": "string",
+                "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "definition": {
+                "type": "string",
+                "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "term",
+              "definition"
+            ],
+            "title": "termBlock"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "lessonReference"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "lessonId": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "label": {
+                "type": "string",
+                "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "lessonId",
+              "label"
+            ],
+            "title": "lessonReferenceBlock"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "externalLink"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "url": {
+                "type": "string",
+                "maxLength": 2048,
+                "pattern": "^https:\\/\\/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)*(?::443)?(?:[/?][!-\"$-\\[\\]-~]*)?$"
+              },
+              "label": {
+                "type": "string",
+                "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "url",
+              "label"
+            ],
+            "title": "externalLinkBlock"
+          }
+        ],
+        "title": "ContentBlock"
+      }
+    },
+    "reflect": {
+      "minItems": 1,
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+        "minLength": 1,
+        "maxLength": 500
+      },
+      "description": "Questions to consider."
+    },
+    "live": {
+      "minItems": 1,
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+        "minLength": 1,
+        "maxLength": 500
+      },
+      "description": "Practical applications."
+    },
+    "sourceIds": {
+      "maxItems": 30,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "relatedLessonIds": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "introductory",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "withdrawn"
+      ]
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "isDevelopmentContent": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "locale",
+    "pathId",
+    "pathOrder",
+    "title",
+    "summary",
+    "objectives",
+    "learn",
+    "reflect",
+    "live",
+    "sourceIds",
+    "relatedLessonIds",
+    "difficulty",
+    "status",
+    "revision",
+    "isDevelopmentContent"
+  ],
+  "title": "Lesson",
+  "description": "A reviewed lesson organized as Learn, Reflect, Live.",
+  "$id": "urn:living-orthodox:contract:v1:lesson"
+}

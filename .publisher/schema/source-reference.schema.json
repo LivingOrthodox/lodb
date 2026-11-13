@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "publisher": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "title": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "canonicalUrl": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 2048,
+          "pattern": "^https:\\/\\/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)*(?::443)?(?:[/?][!-\"$-\\[\\]-~]*)?$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "locator": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "edition": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "translation": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "retrievedOn": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+          "description": "Gregorian civil date (YYYY-MM-DD), year 1900-2199. Not a timestamp."
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "rightsReference": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "ID of the rights/permission record. The evidence itself stays out of public payloads."
+    },
+    "allowedUses": {
+      "type": "object",
+      "properties": {
+        "offlineStorage": {
+          "type": "boolean"
+        },
+        "redistribution": {
+          "type": "boolean"
+        },
+        "feedExcerpts": {
+          "type": "boolean"
+        },
+        "sharing": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "offlineStorage",
+        "redistribution",
+        "feedExcerpts",
+        "sharing"
+      ],
+      "title": "AllowedUses",
+      "description": "What the rights evidence permits. Every use is explicit; nothing is implied by omission."
+    }
+  },
+  "required": [
+    "id",
+    "publisher",
+    "title",
+    "rightsReference",
+    "allowedUses"
+  ],
+  "title": "SourceReference",
+  "description": "Where a piece of content comes from and what its rights allow.",
+  "$id": "urn:living-orthodox:contract:v1:source-reference"
+}

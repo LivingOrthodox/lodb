@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "configurationId": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+      "description": "Gregorian civil date (YYYY-MM-DD), year 1900-2199. Not a timestamp."
+    },
+    "eventIds": {
+      "maxItems": 30,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true,
+      "description": "In display order."
+    },
+    "principalEventId": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 80,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fasting": {
+      "description": "Absent means no fasting guidance is published for this day.",
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "foods": {
+              "type": "object",
+              "properties": {
+                "meat": {
+                  "type": "string",
+                  "enum": [
+                    "permitted",
+                    "abstained",
+                    "unspecified"
+                  ]
+                },
+                "dairy": {
+                  "type": "string",
+                  "enum": [
+                    "permitted",
+                    "abstained",
+                    "unspecified"
+                  ]
+                },
+                "eggs": {
+                  "type": "string",
+                  "enum": [
+                    "permitted",
+                    "abstained",
+                    "unspecified"
+                  ]
+                },
+                "fish": {
+                  "type": "string",
+                  "enum": [
+                    "permitted",
+                    "abstained",
+                    "unspecified"
+                  ]
+                },
+                "shellfish": {
+                  "type": "string",
+                  "enum": [
+                    "permitted",
+                    "abstained",
+                    "unspecified"
+                  ]
+                },
+                "wine": {
+                  "type": "string",
+                  "enum": [
+                    "permitted",
+                    "abstained",
+                    "unspecified"
+                  ]
+                },
+                "oliveOil": {
+                  "type": "string",
+                  "enum": [
+                    "permitted",
+                    "abstained",
+                    "unspecified"
+                  ]
+                },
+                "otherOil": {
+                  "type": "string",
+                  "enum": [
+                    "permitted",
+                    "abstained",
+                    "unspecified"
+                  ]
+                }
+              },
+              "required": [
+                "meat",
+                "dairy",
+                "eggs",
+                "fish",
+                "shellfish",
+                "wine",
+                "oliveOil",
+                "otherOil"
+              ]
+            },
+            "allowances": {
+              "maxItems": 8,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "food": {
+                    "type": "string",
+                    "enum": [
+                      "meat",
+                      "dairy",
+                      "eggs",
+                      "fish",
+                      "shellfish",
+                      "wine",
+                      "oliveOil",
+                      "otherOil"
+                    ]
+                  },
+                  "note": {
+                    "type": "string",
+                    "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+                    "minLength": 1,
+                    "maxLength": 300
+                  }
+                },
+                "required": [
+                  "food",
+                  "note"
+                ],
+                "title": "FastingAllowance"
+              },
+              "description": "Explained variations, e.g. a customary allowance on a feast within a fast."
+            },
+            "explanation": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+                  "minLength": 1,
+                  "maxLength": 1000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sourceIds": {
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "uniqueItems": true,
+              "minItems": 1
+            }
+          },
+          "required": [
+            "foods",
+            "allowances",
+            "sourceIds"
+          ],
+          "title": "FastingRule",
+          "description": "Customary fasting guidance from reviewed sources. Not personal direction."
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "isDevelopmentContent": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "configurationId",
+    "date",
+    "eventIds",
+    "revision",
+    "isDevelopmentContent"
+  ],
+  "title": "CalendarDay",
+  "description": "A compiled day; the apps render it, never re-derive it.",
+  "$id": "urn:living-orthodox:contract:v1:calendar-day"
+}

@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "contractVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "releaseId": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "development",
+        "production"
+      ]
+    },
+    "publishedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+      "description": "UTC timestamp, e.g. 2026-10-13T12:00:00Z."
+    },
+    "algorithms": {
+      "type": "object",
+      "properties": {
+        "daily": {
+          "type": "string",
+          "const": "daily-v1"
+        },
+        "calendar": {
+          "type": "string",
+          "const": "calendar-v1"
+        }
+      },
+      "required": [
+        "daily",
+        "calendar"
+      ],
+      "title": "ReleaseAlgorithms"
+    },
+    "files": {
+      "minItems": 1,
+      "maxItems": 200,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "maxLength": 200,
+            "pattern": "^(?:(?:[a-z0-9][a-z0-9_-]*\\/)*[a-z0-9][a-z0-9_-]*\\.json|assets\\/(?:[a-z0-9][a-z0-9_-]*\\/)*[a-z0-9][a-z0-9_-]*\\.(?:jpg|heic|webp|png))$",
+            "description": "Relative to the release directory."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "sources",
+              "daily",
+              "library",
+              "calendar",
+              "asset"
+            ]
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20000000
+          }
+        },
+        "required": [
+          "path",
+          "kind",
+          "sha256",
+          "bytes"
+        ],
+        "title": "ReleaseFile"
+      }
+    },
+    "coverage": {
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "configurationId": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "start": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "Gregorian civil date (YYYY-MM-DD), year 1900-2199. Not a timestamp."
+          },
+          "end": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "Gregorian civil date (YYYY-MM-DD), year 1900-2199. Not a timestamp."
+          }
+        },
+        "required": [
+          "configurationId",
+          "start",
+          "end"
+        ],
+        "title": "ReleaseCoverage"
+      }
+    },
+    "withdrawn": {
+      "maxItems": 10000,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      },
+      "description": "Record keys withdrawn in this release, e.g. thought:some-id."
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "contractVersion",
+    "releaseId",
+    "channel",
+    "publishedAt",
+    "algorithms",
+    "files",
+    "coverage",
+    "withdrawn"
+  ],
+  "title": "ReleaseManifest",
+  "$id": "urn:living-orthodox:contract:v1:release-manifest"
+}

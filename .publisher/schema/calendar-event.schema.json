@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Stable occurrence id; never derived from the date or title."
+    },
+    "configurationId": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+      "description": "Gregorian civil date (YYYY-MM-DD), year 1900-2199. Not a timestamp."
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "feast",
+        "fast",
+        "commemoration",
+        "observance"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "scriptureReferences": {
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    "relatedLessonIds": {
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true
+    },
+    "sourceIds": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "withdrawn"
+      ]
+    },
+    "isDevelopmentContent": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "configurationId",
+    "date",
+    "kind",
+    "title",
+    "scriptureReferences",
+    "relatedLessonIds",
+    "sourceIds",
+    "revision",
+    "status",
+    "isDevelopmentContent"
+  ],
+  "title": "CalendarEvent",
+  "$id": "urn:living-orthodox:contract:v1:calendar-event"
+}

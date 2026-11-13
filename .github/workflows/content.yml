@@ -1,0 +1,132 @@
+# Validates editorial content on pull requests and publishes app releases from main.
+# Managed by the Living Orthodox lodb kit; regenerate it rather than editing here.
+# Actions are pinned to full commit SHAs.
+name: Content
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    # Daily, so the calendar window moves forward even when nothing is edited.
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+    inputs:
+      first_publication:
+        description: Calendar configuration id being published to Google Calendar for the first time (allocates its permanent event identities)
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: content-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "26"
+      - name: Verify the vendored publisher
+        run: node .publisher/verify-vendor.ts
+      - name: Install the publisher's pinned dependencies
+        working-directory: .publisher
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Validate for the development channel
+        run: node .publisher/publisher/src/cli.ts validate --input editorial --channel development
+      - name: Report production readiness
+        run: |
+          if node .publisher/publisher/src/cli.ts validate --input editorial --channel production; then
+            echo "::notice::This content is ready for the production channel."
+          else
+            echo "::notice::Not yet ready for production; merging publishes to the development channel only."
+          fi
+
+  publish:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "26"
+      - name: Verify the vendored publisher
+        run: node .publisher/verify-vendor.ts
+      - name: Install the publisher's pinned dependencies
+        working-directory: .publisher
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Publish
+        run: |
+          set -euo pipefail
+          release_id="$(date -u +%Y%m%d-%H%M%S)-${GITHUB_SHA:0:7}"
+          published_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          publish() {
+            node .publisher/publisher/src/cli.ts publish --input editorial --channel "$1" --output . \
+              --release-id "$release_id-$1" --published-at "$published_at"
+          }
+          publish development
+          if node .publisher/publisher/src/cli.ts validate --input editorial --channel production; then
+            publish production
+          else
+            echo "::notice::Not ready for production; the production channel was left unchanged."
+          fi
+      - name: Commit the release
+        run: |
+          set -euo pipefail
+          for path in channels releases; do
+            if [ -e "$path" ]; then git add -- "$path"; fi
+          done
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "Publish content from ${GITHUB_SHA:0:7}"
+          git push origin HEAD:main
+      - name: Sync Google Calendar
+        id: sync
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SYNC_CHANNEL: ${{ vars.GOOGLE_CALENDAR_CHANNEL || 'production' }}
+          FIRST_PUBLICATION: ${{ inputs.first_publication }}
+        run: |
+          set -euo pipefail
+          if [ -z "$GOOGLE_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::notice::No GOOGLE_SERVICE_ACCOUNT_JSON secret; Google Calendar sync skipped."
+            exit 0
+          fi
+          if ! node .publisher/publisher/src/cli.ts validate --input editorial --channel "$SYNC_CHANNEL" > /dev/null 2>&1; then
+            echo "::notice::Content is not valid for $SYNC_CHANNEL; Google Calendar left unchanged."
+            exit 0
+          fi
+          args=()
+          if [ -n "$FIRST_PUBLICATION" ]; then args+=(--first-publication "$FIRST_PUBLICATION"); fi
+          node .publisher/publisher/src/cli.ts sync-google --input editorial --channel "$SYNC_CHANNEL" --ledgers ledgers \
+            --now "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "${args[@]}"
+      - name: Commit the calendar ledgers
+        # Also after a failed sync: identities already allocated must never be lost.
+        if: ${{ !cancelled() && (steps.sync.outcome == 'success' || steps.sync.outcome == 'failure') }}
+        run: |
+          set -euo pipefail
+          for path in ledgers; do
+            if [ -e "$path" ]; then git add -- "$path"; fi
+          done
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "Record Google Calendar identities"
+          git push origin HEAD:main

@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "withdrawn"
+      ]
+    },
+    "altText": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "variants": {
+      "minItems": 1,
+      "maxItems": 6,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "maxLength": 200,
+            "pattern": "^assets\\/(?:[a-z0-9][a-z0-9_-]*\\/)*[a-z0-9][a-z0-9_-]*\\.(?:jpg|heic|webp|png)$"
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "jpeg",
+              "heic",
+              "webp",
+              "png"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "width",
+          "height",
+          "sha256",
+          "format"
+        ],
+        "title": "ImageVariant"
+      }
+    },
+    "focalPoint": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "FocalPoint"
+    },
+    "attribution": {
+      "type": "object",
+      "properties": {
+        "photographer": {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "license": {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "licenseUrl": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 2048,
+              "pattern": "^https:\\/\\/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)*(?::443)?(?:[/?][!-\"$-\\[\\]-~]*)?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attributionText": {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "photographer",
+        "license",
+        "attributionText"
+      ],
+      "title": "ImageAttribution",
+      "description": "Image credit, kept separate from any thought's provenance."
+    },
+    "tags": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true
+    },
+    "assignedDates": {
+      "maxItems": 366,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "date",
+        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+        "description": "Gregorian civil date (YYYY-MM-DD), year 1900-2199. Not a timestamp."
+      },
+      "uniqueItems": true
+    },
+    "isDevelopmentContent": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "status",
+    "altText",
+    "variants",
+    "focalPoint",
+    "attribution",
+    "tags",
+    "assignedDates",
+    "isDevelopmentContent"
+  ],
+  "title": "DailyBackground",
+  "description": "A licensed nature photograph for Today.",
+  "$id": "urn:living-orthodox:contract:v1:daily-background"
+}

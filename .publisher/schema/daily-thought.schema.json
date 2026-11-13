@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "locale": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}$"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "editorial",
+        "antiochian"
+      ],
+      "description": "editorial: chosen in the content repository. antiochian: imported under an authorized agreement."
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "quotation",
+        "originalReflection"
+      ]
+    },
+    "text": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "author": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "The person who actually wrote or said it, not the publishing organization."
+    },
+    "attribution": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "publisher": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "originalPublicationDate": {
+      "description": "When it was first published. Distinct from the dates it is displayed.",
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+          "description": "Gregorian civil date (YYYY-MM-DD), year 1900-2199. Not a timestamp."
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sourceIds": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "displayDates": {
+      "maxItems": 366,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "date",
+        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+        "description": "Gregorian civil date (YYYY-MM-DD), year 1900-2199. Not a timestamp."
+      },
+      "uniqueItems": true,
+      "description": "Civil dates this thought is assigned to."
+    },
+    "fallbackEligible": {
+      "type": "boolean",
+      "description": "May be shown as a Selected reflection on dates with no assignment."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "withdrawn"
+      ]
+    },
+    "reflection": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "practicalAction": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "isDevelopmentContent": {
+      "type": "boolean",
+      "description": "Synthetic data for development builds. Release packaging rejects it."
+    }
+  },
+  "required": [
+    "id",
+    "locale",
+    "origin",
+    "kind",
+    "text",
+    "author",
+    "attribution",
+    "sourceIds",
+    "displayDates",
+    "fallbackEligible",
+    "status",
+    "isDevelopmentContent"
+  ],
+  "title": "DailyThought",
+  "description": "A thought shown on Today, with its true author and provenance.",
+  "$id": "urn:living-orthodox:contract:v1:daily-thought"
+}
