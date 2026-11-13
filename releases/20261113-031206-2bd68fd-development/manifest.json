@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "contractVersion": 1,
+  "releaseId": "20261113-031206-2bd68fd-development",
+  "channel": "development",
+  "publishedAt": "2026-11-13T03:12:06Z",
+  "algorithms": {
+    "daily": "daily-v1",
+    "calendar": "calendar-v1"
+  },
+  "files": [
+    {
+      "path": "content/sources.json",
+      "kind": "sources",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "content/daily.json",
+      "kind": "daily",
+      "sha256": "27757312de9f412b35fede29887bed8047dd46da2ed3df1419ec309785f8071f",
+      "bytes": 32
+    },
+    {
+      "path": "content/library.json",
+      "kind": "library",
+      "sha256": "2c805a502cce8d77f95d9f4eed5297b2a3fccbd56680243aead3ae764c92fa12",
+      "bytes": 14
+    }
+  ],
+  "coverage": [],
+  "withdrawn": []
+}
